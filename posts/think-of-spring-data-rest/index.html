@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang='zh'><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>关于Spring Data Rest的一些思考 | 十日十月</title>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/eureka.min.css">
+
+
+
+
+<script defer src="/js/eureka.min.js"></script>
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js" integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="
+    crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+<meta name="description"
+    content="背景介绍 最近一直在开发一些基于 Spring Data REST 的项目。在此过程中，随着开发工作的不断深入，对 Spring Data REST 的了解也越来越深。享受着 Spring Data REST 带来的便捷，也忍受着它带来的不便">
+
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+"@type": "ListItem",
+"position":  1 ,
+"name": "十日十月",
+"item": "/"
+},{
+"@type": "ListItem",
+"position":  2 ,
+"name": "文章",
+"item": "/posts/"
+},{
+"@type": "ListItem",
+"position":  3 ,
+"name": "关于Spring Data Rest的一些思考",
+"item": "/posts/think-of-spring-data-rest/"
+}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/think-of-spring-data-rest/"
+    },
+    "headline": "关于Spring Data Rest的一些思考 | 十日十月",
+    "image": "https://images.unsplash.com/photo-1605522220576-f5566d005f1c?ixlib=rb-1.2.1\u0026ixid=eyJhcHBfaWQiOjEyMDd9\u0026auto=format\u0026fit=crop\u0026w=1352\u0026q=80",
+    "datePublished": "2020-11-17T16:45:53+08:00",
+    "dateModified": "2020-11-17T16:45:53+08:00",
+    "wordCount":  1033 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "十日十月",
+        },
+    "description": "背景介绍 最近一直在开发一些基于 Spring Data REST 的项目。在此过程中，随着开发工作的不断深入，对 Spring Data REST 的了解也越来越深。享受着 Spring Data REST 带来的便捷，也忍受着它带来的不便"
+}
+</script>
+
+<meta property="og:title" content="关于Spring Data Rest的一些思考 | 十日十月" />
+<meta property="og:type" content="article" />
+
+
+
+<meta property="og:url" content="/posts/think-of-spring-data-rest/" />
+
+
+
+
+<meta property="og:description" content="背景介绍 最近一直在开发一些基于 Spring Data REST 的项目。在此过程中，随着开发工作的不断深入，对 Spring Data REST 的了解也越来越深。享受着 Spring Data REST 带来的便捷，也忍受着它带来的不便" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="十日十月" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2020-11-17T16:45:53&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2020-11-17T16:45:53&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+<body class="flex flex-col min-h-screen">
+    <header class="flex items-center fixed w-full min-h-16 z-50 bg-secondary-bg shadow-sm">
+        <div class="container mx-auto">
+            <div class="max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    } else if (storageColorScheme == "Light") {
+        document.getElementsByTagName('html')[0].classList.remove('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap p-4">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">十日十月</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0" id="current-url"
+            currenturl="/posts/think-of-spring-data-rest/">
+            
+            <a href="/authors/wang/"
+                class="block mt-4 md:inline-block md:mt-0 hover:text-eureka mr-4 main-a">关于我</a>
+            
+            <a href="/posts/"
+                class="block mt-4 md:inline-block md:mt-0 hover:text-eureka mr-4 main-a">文章</a>
+            
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka">Auto</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+        
+    });
+
+    let currenturl = document.getElementById('current-url').getAttribute('currenturl')
+        if (currenturl.length > 1) {
+            currenturl = currenturl.substr(0, currenturl.length - 1)
+        }
+
+        sessionStorage.setItem("mainKey", currenturl)
+
+        let elements = document.getElementsByClassName('main-a');
+        for (let i in elements) {
+            if (typeof elements[i] === "object") {
+                let elementurl = elements[i].getAttribute('href')
+                if (elementurl.length > 1 && elementurl.charAt(elementurl.length - 1) == '/') {
+                    elementurl = elementurl.substr(0, elementurl.length - 1)
+                }
+                if (elementurl == sessionStorage.getItem("mainKey")) {
+                    elements[i].classList.add('text-eureka')
+                } else {
+                    elements[i].classList.remove('text-eureka')
+                }
+            }
+        }
+</script></div>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-16">
+        
+        <div class="container mx-auto ">
+            <div class="max-w-screen-xl lg:px-4 xl:px-8">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">关于Spring Data Rest的一些思考</h1>
+        <div class="flex flex-wrap flex-row items-center my-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-11-17</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>3分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+        
+        
+        <div class="my-4">
+            <img src="https://images.unsplash.com/photo-1605522220576-f5566d005f1c?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1352&amp;q=80" class="w-full" alt="Featured Image">
+        </div>
+        
+        <div class="content">
+            <p><img src="https://cdn.nlark.com/yuque/0/2020/jpeg/269363/1605603064460-a4fcc3c5-3f6a-4202-9123-5bbee9f32a2d.jpeg#align=left&amp;display=inline&amp;height=666&amp;margin=%5Bobject%20Object%5D&amp;originHeight=666&amp;originWidth=1000&amp;size=0&amp;status=done&amp;style=none&amp;width=1000" alt=""></p>
+<h2 id="背景介绍">背景介绍</h2>
+<p>最近一直在开发一些基于 Spring Data REST 的项目。在此过程中，随着开发工作的不断深入，对 Spring Data REST 的了解也越来越深。享受着 Spring Data REST 带来的便捷，也忍受着它带来的不便。</p>
+<h2 id="spring-data-rest-是什么">Spring Data REST 是什么</h2>
+<p>Spring Data REST 的目标是提供坚实的基础，从而使用 HTTP REST 语义来开放 CRUD 操作到你的 JPA 库管理的实体。</p>
+<h3 id="功能特性">功能特性</h3>
+<p>Spring Data REST 提供了一系列的功能特性，来帮助开发者减少重复工作：</p>
+<ul>
+<li>使用HAL作为媒体类型为您的域模型公开一个可发现的REST API</li>
+<li>公开表示模型的集合、项和关联资源</li>
+<li>通过导航链接支持分页</li>
+<li>允许动态筛选集合资源</li>
+<li>公开存储库中定义的查询方法的专用搜索资源</li>
+<li>允许通过处理Spring ApplicationEvents挂钩到REST请求的处</li>
+<li>公开有关被发现的模型的元数据，如ALPS和JSON Schema</li>
+<li>允许通过投影定义客户特定的表示</li>
+<li>发布了一个定制的HAL浏览器变体来利用公开的元数据</li>
+<li>目前支持JPA、MongoDB、Neo4j、Solr、Cassandra、Gemfire</li>
+<li>允许对公开的默认资源进行高级自定义</li>
+</ul>
+<h2 id="适用场景">适用场景</h2>
+<p>在实际的开发过程中，总结出了一些 Spring Data REST 的适用场景：</p>
+<ul>
+<li>增删改查的简单业务逻辑</li>
+<li>前端数据和表结构内容对应</li>
+<li>不含有复杂的关联查询</li>
+</ul>
+<h2 id="复杂化">复杂化</h2>
+<p>在使用过程中，发现一些实际开发中的常见的需求，在使用 Spring Data REST 后，实现起来变得复杂了许多。</p>
+<h3 id="拦截器">拦截器</h3>
+<p>使用 Spring Data REST 后，按通用方式下配置的拦截器不生效，无法拦截住 Spring Data REST 提供的 Restful。需要特殊配置：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Bean</span>
+<span class="kd">public</span> <span class="n">MappedInterceptor</span> <span class="nf">myMappedInterceptor</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">MappedInterceptor</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">[]{</span><span class="s">&#34;/**&#34;</span><span class="o">},</span> <span class="k">new</span> <span class="n">String</span><span class="o">[]{},</span>  <span class="n">testInterceptor</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></div><h3 id="数据加工">数据加工</h3>
+<p>如果数据保存之前需要特殊处理，对数据进行加工，就需要使用 ApplicationEvents 方式来处理：</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BeforeCreateEventListener</span> <span class="o">{</span>
+    <span class="nd">@EventListener</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBeforeCreateEvent</span><span class="o">(</span><span class="n">BeforeCreateEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Object</span> <span class="n">source</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="na">getSource</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">source</span> <span class="k">instanceof</span> <span class="n">RelatedTransaction</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">RelatedTransaction</span> <span class="n">relatedTransaction</span> <span class="o">=</span> <span class="o">(</span><span class="n">RelatedTransaction</span><span class="o">)</span> <span class="n">source</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">relatedTransaction</span><span class="o">.</span><span class="na">getCreateDateTime</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">relatedTransaction</span><span class="o">.</span><span class="na">setCreateDateTime</span><span class="o">(</span><span class="k">new</span> <span class="n">Date</span><span class="o">());</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">relatedTransaction</span><span class="o">.</span><span class="na">getState</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">relatedTransaction</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">StateEnum</span><span class="o">.</span><span class="na">PRE_SUBMIT</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">source</span> <span class="k">instanceof</span> <span class="n">RelatedProject</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">RelatedProject</span> <span class="n">relatedProject</span> <span class="o">=</span> <span class="o">(</span><span class="n">RelatedProject</span><span class="o">)</span> <span class="n">source</span><span class="o">;</span>
+        <span class="o">}</span><span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">source</span> <span class="k">instanceof</span> <span class="n">RelatedCompany</span><span class="o">){</span>
+            <span class="n">RelatedCompany</span> <span class="n">relatedCompany</span> <span class="o">=</span> <span class="o">(</span><span class="n">RelatedCompany</span><span class="o">)</span> <span class="n">source</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">relatedCompany</span><span class="o">.</span><span class="na">getCreateDateTime</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">relatedCompany</span><span class="o">.</span><span class="na">setCreateDateTime</span><span class="o">(</span><span class="k">new</span> <span class="n">Date</span><span class="o">());</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>所有模型的数据创建都会发布 BeforeCreateEvent，所以在处理数据时就需要对数据类型进行判断。这种情况下，很容易就会将多个模型的数据加工的处理逻辑耦合到一起。</p>
+<p>在保存数据时，提供了 Event 供开发者处理数据，但是在查询数据的时候却没有提供相应的数据处理机制，所有对于 VO 数据的加工，开发者就没办法使用 Spring Data REST 了。</p>
+<h3 id="jpa">JPA</h3>
+<p>Spring Data REST 是基于 Spring Data JPA 实现的，而 Spring Data JPA 底层的 ORM 是 hibernate 。就像网上大多数言论一样，hibernate 太复杂了，尤其在处理自定义 SQL 的关联查询时，让开发者感觉无从下手。</p>
+<h3 id="文档少">文档少</h3>
+<p>这里说的文档少指的是关于 Spring Data REST 和 Spring Data JPA 国内的文档太少了。在国内互联网推崇了 Mybatis 之后，国内的博客、网站到处都充斥着 Mybatis 的帮助文档，问题解决方案。</p>
+<h2 id="总结">总结</h2>
+<p>在软件开发领域里，没有银弹，每一种技术、一种框架都有它自己的适用场景。</p>
+
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <div class="container mx-auto">
+            <div class="max-w-screen-xl"><footer class="w-full text-center p-6 pin-b text-sm text-tertiary-text">
+    <p>&copy; 2020 <a href="https://www.wangjianchao.cn/">JC. Wang</a> &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</footer></div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Spring on 十日十月</title>
+    <link>/tags/spring/</link>
+    <description>Recent content in Spring on 十日十月</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2020 &lt;a href=&#34;https://www.wangjianchao.cn/&#34;&gt;JC. Wang&lt;/a&gt;</copyright>
+    <lastBuildDate>Tue, 17 Nov 2020 16:45:53 +0800</lastBuildDate><atom:link href="/tags/spring/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>关于Spring Data Rest的一些思考</title>
+      <link>/posts/think-of-spring-data-rest/</link>
+      <pubDate>Tue, 17 Nov 2020 16:45:53 +0800</pubDate>
+      
+      <guid>/posts/think-of-spring-data-rest/</guid>
+      <description>背景介绍 最近一直在开发一些基于 Spring Data REST 的项目。在此过程中，随着开发工作的不断深入，对 Spring Data REST 的了解也越来越深。享受着 Spring Data REST 带来的便捷，也忍受着它带来的不便</description>
+    </item>
+    
+  </channel>
+</rss>

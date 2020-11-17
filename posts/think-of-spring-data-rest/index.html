@@ -218,7 +218,7 @@
 
 <div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
     <div
-        class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
         <h1 class="font-bold text-3xl text-primary-text">关于Spring Data Rest的一些思考</h1>
         <div class="flex flex-wrap flex-row items-center my-2 text-tertiary-text">
     <div class="mr-6 my-2">
@@ -241,8 +241,7 @@
         </div>
         
         <div class="content">
-            <p><img src="https://cdn.nlark.com/yuque/0/2020/jpeg/269363/1605603064460-a4fcc3c5-3f6a-4202-9123-5bbee9f32a2d.jpeg#align=left&amp;display=inline&amp;height=666&amp;margin=%5Bobject%20Object%5D&amp;originHeight=666&amp;originWidth=1000&amp;size=0&amp;status=done&amp;style=none&amp;width=1000" alt=""></p>
-<h2 id="背景介绍">背景介绍</h2>
+            <h2 id="背景介绍">背景介绍</h2>
 <p>最近一直在开发一些基于 Spring Data REST 的项目。在此过程中，随着开发工作的不断深入，对 Spring Data REST 的了解也越来越深。享受着 Spring Data REST 带来的便捷，也忍受着它带来的不便。</p>
 <h2 id="spring-data-rest-是什么">Spring Data REST 是什么</h2>
 <p>Spring Data REST 的目标是提供坚实的基础，从而使用 HTTP REST 语义来开放 CRUD 操作到你的 JPA 库管理的实体。</p>
@@ -318,6 +317,42 @@
         
         
         
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#背景介绍">背景介绍</a></li>
+    <li><a href="#spring-data-rest-是什么">Spring Data REST 是什么</a>
+      <ul>
+        <li><a href="#功能特性">功能特性</a></li>
+      </ul>
+    </li>
+    <li><a href="#适用场景">适用场景</a></li>
+    <li><a href="#复杂化">复杂化</a>
+      <ul>
+        <li><a href="#拦截器">拦截器</a></li>
+        <li><a href="#数据加工">数据加工</a></li>
+        <li><a href="#jpa">JPA</a></li>
+        <li><a href="#文档少">文档少</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
         
     </div>
     

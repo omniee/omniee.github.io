@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang='zh'><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>使用Jackson对比两个对象 | 十日十月</title>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/eureka.min.css">
+
+
+
+
+<script defer src="/js/eureka.min.js"></script>
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js" integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="
+    crossorigin="anonymous"></script>
+
+
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_2.png">
+
+
+
+
+<meta name="description"
+    content="1. 概述 在本文中，我们将使用Jackson—一个用于Java的JSON处理库来比较两个JSON对象。 2. Maven依赖 首先，让我们添加jackson-da">
+
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+"@type": "ListItem",
+"position":  1 ,
+"name": "十日十月",
+"item": "/"
+},{
+"@type": "ListItem",
+"position":  2 ,
+"name": "文章",
+"item": "/posts/"
+},{
+"@type": "ListItem",
+"position":  3 ,
+"name": "使用Jackson对比两个对象",
+"item": "/posts/jackson-compare-two-json-objects/"
+}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/jackson-compare-two-json-objects/"
+    },
+    "headline": "使用Jackson对比两个对象 | 十日十月",
+    "image": "https://images.unsplash.com/photo-1603983732011-caaf6ca67a3e?ixlib=rb-1.2.1\u0026ixid=eyJhcHBfaWQiOjEyMDd9\u0026auto=format\u0026fit=crop\u0026w=1350\u0026q=80",
+    "datePublished": "2020-11-17T20:54:50+08:00",
+    "dateModified": "2020-11-17T20:54:50+08:00",
+    "wordCount":  1673 ,
+    "author": {
+        "@type": "Person",
+        "name": ["wang"]
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "十日十月",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "1. 概述 在本文中，我们将使用Jackson—一个用于Java的JSON处理库来比较两个JSON对象。 2. Maven依赖 首先，让我们添加jackson-da"
+}
+</script>
+
+<meta property="og:title" content="使用Jackson对比两个对象 | 十日十月" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/jackson-compare-two-json-objects/" />
+
+
+
+
+<meta property="og:description" content="1. 概述 在本文中，我们将使用Jackson—一个用于Java的JSON处理库来比较两个JSON对象。 2. Maven依赖 首先，让我们添加jackson-da" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="十日十月" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2020-11-17T20:54:50&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2020-11-17T20:54:50&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+<body class="flex flex-col min-h-screen">
+    <header class="flex items-center fixed w-full min-h-16 z-50 bg-secondary-bg shadow-sm">
+        <div class="container mx-auto">
+            <div class="max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    } else if (storageColorScheme == "Light") {
+        document.getElementsByTagName('html')[0].classList.remove('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap p-4">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">十日十月</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0" id="current-url"
+            currenturl="/posts/jackson-compare-two-json-objects/">
+            
+            <a href="/authors/wang/"
+                class="block mt-4 md:inline-block md:mt-0 hover:text-eureka mr-4 main-a">关于我</a>
+            
+            <a href="/posts/"
+                class="block mt-4 md:inline-block md:mt-0 hover:text-eureka mr-4 main-a">文章</a>
+            
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka">Auto</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+        
+    });
+
+    let currenturl = document.getElementById('current-url').getAttribute('currenturl')
+        if (currenturl.length > 1) {
+            currenturl = currenturl.substr(0, currenturl.length - 1)
+        }
+
+        sessionStorage.setItem("mainKey", currenturl)
+
+        let elements = document.getElementsByClassName('main-a');
+        for (let i in elements) {
+            if (typeof elements[i] === "object") {
+                let elementurl = elements[i].getAttribute('href')
+                if (elementurl.length > 1 && elementurl.charAt(elementurl.length - 1) == '/') {
+                    elementurl = elementurl.substr(0, elementurl.length - 1)
+                }
+                if (elementurl == sessionStorage.getItem("mainKey")) {
+                    elements[i].classList.add('text-eureka')
+                } else {
+                    elements[i].classList.remove('text-eureka')
+                }
+            }
+        }
+</script></div>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-16">
+        
+        <div class="container mx-auto ">
+            <div class="max-w-screen-xl lg:px-4 xl:px-8">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">使用Jackson对比两个对象</h1>
+        <div class="flex flex-wrap flex-row items-center my-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-11-17</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>4分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+        
+        
+        <div class="my-4">
+            <img src="https://images.unsplash.com/photo-1603983732011-caaf6ca67a3e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1350&amp;q=80" class="w-full" alt="Featured Image">
+        </div>
+        
+        <div class="content">
+            <h2 id="1-概述">1. 概述</h2>
+<p>在本文中，我们将使用Jackson—一个用于Java的JSON处理库来比较两个JSON对象。</p>
+<h2 id="2-maven依赖">2. Maven依赖</h2>
+<p>首先，让我们添加jackson-databind Maven依赖:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.fasterxml.jackson.core<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jackson-databind<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.9.8<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div><h2 id="3使用jackson比较两个json对象">3.使用Jackson比较两个JSON对象</h2>
+<p>我们将使用ObjectMapper类来读取作为JsonNode的对象。</p>
+<p>让我们创建一个ObjectMapper:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">ObjectMapper</span> <span class="n">mapper</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectMapper</span><span class="o">();</span>
+</code></pre></div><h3 id="31-比较两个简单的json对象">3.1. 比较两个简单的JSON对象</h3>
+<p>让我们从使用JsonNode.equals方法开始。equals()方法执行一个完整的(深度的)比较。</p>
+<p>假设我们有一个JSON字符串定义为s1变量:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;employee&#34;</span><span class="p">:</span>
+    <span class="p">{</span>
+        <span class="nt">&#34;id&#34;</span><span class="p">:</span> <span class="s2">&#34;1212&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;fullName&#34;</span><span class="p">:</span> <span class="s2">&#34;John Miles&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">34</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>我们要和另一个JSON s2比较</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>   
+    <span class="nt">&#34;employee&#34;</span><span class="p">:</span>
+    <span class="p">{</span>
+        <span class="nt">&#34;id&#34;</span><span class="p">:</span> <span class="s2">&#34;1212&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="nt">&#34;fullName&#34;</span><span class="p">:</span> <span class="s2">&#34;John Miles&#34;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>让我们将输入的JSON读取为JsonNode并进行比较:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">assertEquals</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s1</span><span class="o">),</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s2</span><span class="o">));</span>
+</code></pre></div><p>需要注意的是，即使输入JSON变量s1和s2中的属性顺序不相同，equals()方法也会忽略顺序，并将它们视为相等的。</p>
+<h3 id="32-比较两个嵌套元素的json对象">3.2. 比较两个嵌套元素的JSON对象</h3>
+<p>接下来，我们将了解如何比较两个嵌套元素的JSON对象。</p>
+<p>让我们从定义为s1变量的JSON开始:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;employee&#34;</span><span class="p">:</span>
+    <span class="p">{</span>
+        <span class="nt">&#34;id&#34;</span><span class="p">:</span> <span class="s2">&#34;1212&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;fullName&#34;</span><span class="p">:</span><span class="s2">&#34;John Miles&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="nt">&#34;contact&#34;</span><span class="p">:</span>
+        <span class="p">{</span>
+            <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;john@xyz.com&#34;</span><span class="p">,</span>
+            <span class="nt">&#34;phone&#34;</span><span class="p">:</span> <span class="s2">&#34;9999999999&#34;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>我们可以看到，JSON包含一个嵌套的元素contact。我们想将它与s2定义的另一个JSON进行比较:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;employee&#34;</span><span class="p">:</span>
+    <span class="p">{</span>
+        <span class="nt">&#34;id&#34;</span><span class="p">:</span> <span class="s2">&#34;1212&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="nt">&#34;fullName&#34;</span><span class="p">:</span> <span class="s2">&#34;John Miles&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;contact&#34;</span><span class="p">:</span>
+        <span class="p">{</span>
+            <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;john@xyz.com&#34;</span><span class="p">,</span>
+            <span class="nt">&#34;phone&#34;</span><span class="p">:</span> <span class="s2">&#34;9999999999&#34;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>让我们将输入的JSON读取为JsonNode并进行比较:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">assertEquals</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s1</span><span class="o">),</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s2</span><span class="o">));</span>
+</code></pre></div><p>同样，我们应该注意到equals()还可以比较具有嵌套元素的两个输入JSON对象。</p>
+<h3 id="33-比较包含列表元素的两个json对象">3.3. 比较包含列表元素的两个JSON对象</h3>
+<p>类似地，我们还可以比较包含list元素的两个JSON对象。</p>
+<p>让我们考虑这个JSON定义为s1:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;employee&#34;</span><span class="p">:</span>
+    <span class="p">{</span>
+        <span class="nt">&#34;id&#34;</span><span class="p">:</span> <span class="s2">&#34;1212&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;fullName&#34;</span><span class="p">:</span> <span class="s2">&#34;John Miles&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="nt">&#34;skills&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;Java&#34;</span><span class="p">,</span> <span class="s2">&#34;C++&#34;</span><span class="p">,</span> <span class="s2">&#34;Python&#34;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>我们将它与另一个JSON s2进行比较:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;employee&#34;</span><span class="p">:</span>
+    <span class="p">{</span>
+        <span class="nt">&#34;id&#34;</span><span class="p">:</span> <span class="s2">&#34;1212&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="nt">&#34;fullName&#34;</span><span class="p">:</span> <span class="s2">&#34;John Miles&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;skills&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;Java&#34;</span><span class="p">,</span> <span class="s2">&#34;C++&#34;</span><span class="p">,</span> <span class="s2">&#34;Python&#34;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>让我们将输入的JSON读取为JsonNode并进行比较:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">assertEquals</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s1</span><span class="o">),</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s2</span><span class="o">));</span>
+</code></pre></div><p>重要的是要知道，只有当两个列表元素具有完全相同的顺序的相同值时，才会将它们作为相等进行比较。</p>
+<h2 id="4-使用自定义比较器比较两个json对象">4. 使用自定义比较器比较两个JSON对象</h2>
+<p>JsonNode.equals在大多数情况下都很好用。Jackson还提供了JsonNode.equals(comparator, JsonNode)来配置定制的Java比较器对象。让我们了解如何使用自定义比较器。</p>
+<h3 id="41-自定义比较器来比较数值">4.1. 自定义比较器来比较数值</h3>
+<p>让我们了解如何使用自定义比较器来比较两个具有数值的JSON元素。</p>
+<p>我们将使用这个JSON作为输入s1:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;John&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mf">5.0</span>
+<span class="p">}</span>
+</code></pre></div><p>让我们比较另一个定义为s2的JSON:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;John&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mi">5</span>
+<span class="p">}</span>
+</code></pre></div><p>我们需要注意，输入s1和s2中的属性分数值是不一样的。</p>
+<p>让我们将输入的JSON读取为JsonNode并进行比较:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">JsonNode</span> <span class="n">actualObj1</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span>
+<span class="n">JsonNode</span> <span class="n">actualObj2</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s2</span><span class="o">);</span>
+
+<span class="n">assertNotEquals</span><span class="o">(</span><span class="n">actualObj1</span><span class="o">,</span> <span class="n">actualObj2</span><span class="o">);</span>
+</code></pre></div><p>我们可以注意到，这两个对象是不相等的。standard equals()方法认为值5.0和5是不同的。</p>
+<p>但是，我们可以使用自定义的比较器来比较值5和5.0，并将它们同等对待。</p>
+<p>让我们首先创建一个比较器来比较两个NumericNode对象:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NumericNodeComparator</span> <span class="kd">implements</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">JsonNode</span><span class="o">&gt;</span>
+<span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="n">JsonNode</span> <span class="n">o1</span><span class="o">,</span> <span class="n">JsonNode</span> <span class="n">o2</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">o1</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">o2</span><span class="o">)){</span>
+           <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">((</span><span class="n">o1</span> <span class="k">instanceof</span> <span class="n">NumericNode</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">o2</span> <span class="k">instanceof</span> <span class="n">NumericNode</span><span class="o">)){</span>
+            <span class="n">Double</span> <span class="n">d1</span> <span class="o">=</span> <span class="o">((</span><span class="n">NumericNode</span><span class="o">)</span> <span class="n">o1</span><span class="o">).</span><span class="na">asDouble</span><span class="o">();</span>
+            <span class="n">Double</span> <span class="n">d2</span> <span class="o">=</span> <span class="o">((</span><span class="n">NumericNode</span><span class="o">)</span> <span class="n">o2</span><span class="o">).</span><span class="na">asDouble</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">d1</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">d2</span><span class="o">)</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+               <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">1</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>接下来，让我们看看如何使用这个比较器:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">NumericNodeComparator</span> <span class="n">cmp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NumericNodeComparator</span><span class="o">();</span>
+<span class="n">assertTrue</span><span class="o">(</span><span class="n">actualObj1</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">cmp</span><span class="o">,</span> <span class="n">actualObj2</span><span class="o">));</span>
+</code></pre></div><h3 id="42-自定义比较器来比较文本值">4.2. 自定义比较器来比较文本值</h3>
+<p>让我们看另一个自定义比较器的示例，用于对两个JSON值进行不区分大小写的比较。</p>
+<p>我们将使用这个JSON作为输入s1:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;john&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mi">5</span>
+<span class="p">}</span>
+</code></pre></div><p>让我们比较另一个定义为s2的JSON:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;JOHN&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mi">5</span>
+<span class="p">}</span>
+</code></pre></div><p>正如我们看到的那样，属性名在输入s1中是小写的，在s2中是大写的。</p>
+<p>让我们首先创建一个比较器来比较两个TextNode对象:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TextNodeComparator</span> <span class="kd">implements</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">JsonNode</span><span class="o">&gt;</span>
+<span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="n">JsonNode</span> <span class="n">o1</span><span class="o">,</span> <span class="n">JsonNode</span> <span class="n">o2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">o1</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">o2</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">((</span><span class="n">o1</span> <span class="k">instanceof</span> <span class="n">TextNode</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">o2</span> <span class="k">instanceof</span> <span class="n">TextNode</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">String</span> <span class="n">s1</span> <span class="o">=</span> <span class="o">((</span><span class="n">TextNode</span><span class="o">)</span> <span class="n">o1</span><span class="o">).</span><span class="na">asText</span><span class="o">();</span>
+            <span class="n">String</span> <span class="n">s2</span> <span class="o">=</span> <span class="o">((</span><span class="n">TextNode</span><span class="o">)</span> <span class="n">o2</span><span class="o">).</span><span class="na">asText</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">s1</span><span class="o">.</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="n">s2</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">0</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">1</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>让我们看看如何比较s1和s2使用TextNodeComparator:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">JsonNode</span> <span class="n">actualObj1</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s1</span><span class="o">);</span>
+<span class="n">JsonNode</span> <span class="n">actualObj2</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readTree</span><span class="o">(</span><span class="n">s2</span><span class="o">);</span>
+
+<span class="n">TextNodeComparator</span> <span class="n">cmp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TextNodeComparator</span><span class="o">();</span>
+
+<span class="n">assertNotEquals</span><span class="o">(</span><span class="n">actualObj1</span><span class="o">,</span> <span class="n">actualObj2</span><span class="o">);</span>
+<span class="n">assertTrue</span><span class="o">(</span><span class="n">actualObj1</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">cmp</span><span class="o">,</span> <span class="n">actualObj2</span><span class="o">));</span>
+
+</code></pre></div><p>最后，我们可以看到，在比较两个JSON对象时，使用自定义的comparator对象非常有用，因为输入的JSON元素值并不完全相同，但我们仍然希望将它们同等对待。</p>
+<h2 id="5-总结">5. 总结</h2>
+<p>在这个快速教程中，我们了解了如何使用Jackson来比较两个JSON对象以及如何使用自定义比较器。</p>
+
+        </div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/wang/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="/authors/wang/avatar.jpg" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/wang/" class="block font-bold text-lg pb-1 mb-2 border-b">JC. Wang</a>
+            <span class="block pb-2">路曼曼其修远兮，吾将上下而求索。</span>
+            
+            
+            <a href="akingchao@qq.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            <a href="https://weibo.com/tinyking86" class="mr-1">
+                <i class="fab fa-weibo"></i>
+            </a>
+            
+            
+            <a href="https://github.com/tinyking" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/axios-interceptor/" class="block">Axios拦截器的使用</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/think-of-spring-data-rest/" class="block">关于Spring Data Rest的一些思考</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-概述">1. 概述</a></li>
+    <li><a href="#2-maven依赖">2. Maven依赖</a></li>
+    <li><a href="#3使用jackson比较两个json对象">3.使用Jackson比较两个JSON对象</a>
+      <ul>
+        <li><a href="#31-比较两个简单的json对象">3.1. 比较两个简单的JSON对象</a></li>
+        <li><a href="#32-比较两个嵌套元素的json对象">3.2. 比较两个嵌套元素的JSON对象</a></li>
+        <li><a href="#33-比较包含列表元素的两个json对象">3.3. 比较包含列表元素的两个JSON对象</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-使用自定义比较器比较两个json对象">4. 使用自定义比较器比较两个JSON对象</a>
+      <ul>
+        <li><a href="#41-自定义比较器来比较数值">4.1. 自定义比较器来比较数值</a></li>
+        <li><a href="#42-自定义比较器来比较文本值">4.2. 自定义比较器来比较文本值</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-总结">5. 总结</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <div class="container mx-auto">
+            <div class="max-w-screen-xl"><footer class="w-full text-center p-6 pin-b text-sm text-tertiary-text">
+    <p>&copy; 2020 <a href="https://www.wangjianchao.cn/">JC. Wang</a> &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</footer></div>
+        </div>
+    </footer>
+</body>
+
+</html>

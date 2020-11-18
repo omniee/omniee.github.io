@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang='zh'><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Axios拦截器的使用 | 十日十月</title>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/eureka.min.css">
+
+
+
+
+<script defer src="/js/eureka.min.js"></script>
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js" integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="
+    crossorigin="anonymous"></script>
+
+
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_2.png">
+
+
+
+
+<meta name="description"
+    content="前言 在使用axios进行前后端交出处理时，有时候我们需要在请求中增加特殊的参数，如在header中添加auth token，从而满足实际接口需求。 有两种">
+
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+"@type": "ListItem",
+"position":  1 ,
+"name": "十日十月",
+"item": "/"
+},{
+"@type": "ListItem",
+"position":  2 ,
+"name": "文章",
+"item": "/posts/"
+},{
+"@type": "ListItem",
+"position":  3 ,
+"name": "Axios拦截器的使用",
+"item": "/posts/axios-interceptor/"
+}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/axios-interceptor/"
+    },
+    "headline": "Axios拦截器的使用 | 十日十月",
+    "image": "https://images.unsplash.com/photo-1506731249430-5c2146c9db5f?ixlib=rb-1.2.1\u0026ixid=eyJhcHBfaWQiOjEyMDd9\u0026auto=format\u0026fit=crop\u0026w=1400\u0026q=80",
+    "datePublished": "2020-11-18T16:11:31+08:00",
+    "dateModified": "2020-11-18T16:11:31+08:00",
+    "wordCount":  679 ,
+    "author": {
+        "@type": "Person",
+        "name": ["wang"]
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "十日十月",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "前言 在使用axios进行前后端交出处理时，有时候我们需要在请求中增加特殊的参数，如在header中添加auth token，从而满足实际接口需求。 有两种"
+}
+</script>
+
+<meta property="og:title" content="Axios拦截器的使用 | 十日十月" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/axios-interceptor/" />
+
+
+
+
+<meta property="og:description" content="前言 在使用axios进行前后端交出处理时，有时候我们需要在请求中增加特殊的参数，如在header中添加auth token，从而满足实际接口需求。 有两种" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="十日十月" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2020-11-18T16:11:31&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2020-11-18T16:11:31&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+<body class="flex flex-col min-h-screen">
+    <header class="flex items-center fixed w-full min-h-16 z-50 bg-secondary-bg shadow-sm">
+        <div class="container mx-auto">
+            <div class="max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    } else if (storageColorScheme == "Light") {
+        document.getElementsByTagName('html')[0].classList.remove('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap p-4">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">十日十月</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0" id="current-url"
+            currenturl="/posts/axios-interceptor/">
+            
+            <a href="/authors/wang/"
+                class="block mt-4 md:inline-block md:mt-0 hover:text-eureka mr-4 main-a">关于我</a>
+            
+            <a href="/posts/"
+                class="block mt-4 md:inline-block md:mt-0 hover:text-eureka mr-4 main-a">文章</a>
+            
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka">Auto</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+        
+    });
+
+    let currenturl = document.getElementById('current-url').getAttribute('currenturl')
+        if (currenturl.length > 1) {
+            currenturl = currenturl.substr(0, currenturl.length - 1)
+        }
+
+        sessionStorage.setItem("mainKey", currenturl)
+
+        let elements = document.getElementsByClassName('main-a');
+        for (let i in elements) {
+            if (typeof elements[i] === "object") {
+                let elementurl = elements[i].getAttribute('href')
+                if (elementurl.length > 1 && elementurl.charAt(elementurl.length - 1) == '/') {
+                    elementurl = elementurl.substr(0, elementurl.length - 1)
+                }
+                if (elementurl == sessionStorage.getItem("mainKey")) {
+                    elements[i].classList.add('text-eureka')
+                } else {
+                    elements[i].classList.remove('text-eureka')
+                }
+            }
+        }
+</script></div>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-16">
+        
+        <div class="container mx-auto ">
+            <div class="max-w-screen-xl lg:px-4 xl:px-8">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Axios拦截器的使用</h1>
+        <div class="flex flex-wrap flex-row items-center my-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2020-11-18</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>2分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+        
+        
+        <div class="my-4">
+            <img src="https://images.unsplash.com/photo-1506731249430-5c2146c9db5f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1400&amp;q=80" class="w-full" alt="Featured Image">
+        </div>
+        
+        <div class="content">
+            <h2 id="前言">前言</h2>
+<p>在使用axios进行前后端交出处理时，有时候我们需要在请求中增加特殊的参数，如在header中添加auth token，从而满足实际接口需求。</p>
+<p>有两种方法可以实现该功能：</p>
+<ol>
+<li>在实际请求的方法中添加header配置</li>
+<li>使用拦截配置header，进行统一管理</li>
+</ol>
+<p>axios的拦截器分为两类：</p>
+<ol>
+<li>request拦截器</li>
+<li>response拦截器</li>
+</ol>
+<h2 id="创建实例">创建实例</h2>
+<p>我们可以直接使用axios，这样每次我们都是使用一个新的实例进行操作。</p>
+<p>我们也可以使用create来创建一个axios实例，这样我们就可以服用此实例。</p>
+<p>创建实例：</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">// create an axios instance   创建axios实例
+</span><span class="c1"></span><span class="kr">const</span> <span class="nx">service</span> <span class="o">=</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+  <span class="nx">responseType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+  <span class="nx">withCredentials</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// 是否允许带cookie这些
+</span><span class="c1"></span>  <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;application/json;charset=utf-8&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;X-Requested-With&#39;</span><span class="o">:</span> <span class="s1">&#39;XMLHttpRequest&#39;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div><h2 id="request拦截器">request拦截器</h2>
+<p>首先我们来配置request拦截器，这样我们的所有使用service进行的http请求，都会经过我们配置的request拦截，在请求发出之前，对其进行加工，做到统一管理。</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">service</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">config</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="s1">&#39;get&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">debugger</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="nx">params</span> <span class="o">=</span> <span class="nx">getParams</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">params</span><span class="p">).</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">config</span><span class="p">.</span><span class="nx">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">...</span><span class="nx">getParams</span><span class="p">(),</span>
+        <span class="p">...</span><span class="nx">config</span><span class="p">.</span><span class="nx">params</span>
+      <span class="p">};</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">config</span><span class="p">;</span>
+<span class="p">});</span>
+</code></pre></div><h2 id="response拦截器">response拦截器</h2>
+<p>说完request拦截器，接下来我们来说一下response拦截器。我们可以在response拦截器重统一处理所有请求的响应结果。比如，我们如果后台返回401就表示没有进行登录认证，或者认证已过器，此时，我们就需要让系统自动跳转到登录页面，从而进行新的登陆认证。</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">service</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span>
+  <span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">response</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="nx">err</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">401</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kr">const</span> <span class="nx">location</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;?ReturnUrl=&#39;</span> <span class="o">+</span> <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">origin</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">);</span>
+</code></pre></div><h2 id="导出实例">导出实例</h2>
+<p>配置好拦截器之后，我们创建的service实例所有的请求都会经过我们配置的拦截器逻辑，但此时我们还无法再其他的文件使用该实例，所有需要使用export将service实例导出：</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">export</span> <span class="k">default</span> <span class="nx">service</span><span class="p">;</span> 
+</code></pre></div>
+        </div>
+        
+        
+        
+        
+        
+        <div class="py-2">
+    
+    <div class="flex flex-col md:flex-row items-center my-8">
+        <a href="/authors/wang/" class="w-24 h-24 md:mr-4">
+            
+            
+            <img src="/authors/wang/avatar.jpg" class="w-full bg-primary-bg rounded-full" alt="Avatar">
+            
+        </a>
+        <div class="w-full md:w-auto mt-4 md:mt-0">
+            <a href="/authors/wang/" class="block font-bold text-lg pb-1 mb-2 border-b">JC. Wang</a>
+            <span class="block pb-2">路曼曼其修远兮，吾将上下而求索。</span>
+            
+            
+            <a href="akingchao@qq.com" class="mr-1">
+                <i class="fas fa-envelope"></i>
+            </a>
+            
+            
+            <a href="https://weibo.com/tinyking86" class="mr-1">
+                <i class="fab fa-weibo"></i>
+            </a>
+            
+            
+            <a href="https://github.com/tinyking" class="mr-1">
+                <i class="fab fa-github"></i>
+            </a>
+            
+        </div>
+    </div>
+    
+</div>
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/jackson-compare-two-json-objects/" class="block">使用Jackson对比两个对象</a>
+        
+    </div>
+</div>
+
+        
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#创建实例">创建实例</a></li>
+    <li><a href="#request拦截器">request拦截器</a></li>
+    <li><a href="#response拦截器">response拦截器</a></li>
+    <li><a href="#导出实例">导出实例</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <div class="container mx-auto">
+            <div class="max-w-screen-xl"><footer class="w-full text-center p-6 pin-b text-sm text-tertiary-text">
+    <p>&copy; 2020 <a href="https://www.wangjianchao.cn/">JC. Wang</a> &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</footer></div>
+        </div>
+    </footer>
+</body>
+
+</html>
